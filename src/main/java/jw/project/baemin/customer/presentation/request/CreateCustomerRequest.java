@@ -7,11 +7,12 @@ public record CreateCustomerRequest(
     String name,
     String password
 ) {
-    public Customer toEntity(){
-        return new Customer(
-            this.email,
-            this.name,
-            this.password
-        );
+
+    public Customer toEntity() {
+        return Customer.builder()
+            .email(this.email)
+            .name(this.name)
+            .password(this.password)
+            .build();
     }
 }
