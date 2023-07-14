@@ -37,4 +37,8 @@ public class CustomerService {
 
         return CustomerResponse.from(updateCustomer);
     }
+
+    public void deleteCustomer(Long customerId) {
+        customerRepository.deleteById(customerId);
+    }
 }

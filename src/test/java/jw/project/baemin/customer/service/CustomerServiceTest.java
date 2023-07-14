@@ -1,6 +1,7 @@
 package jw.project.baemin.customer.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import jw.project.baemin.customer.application.CustomerService;
 import jw.project.baemin.customer.domain.Customer;
@@ -76,5 +77,19 @@ public class CustomerServiceTest {
         assertThat(updateCustomer)
             .extracting("email", "name", "userId")
             .contains("efg@efg.com", "hbjh", customerId);
+    }
+
+    @Test
+    @DisplayName("고객 회원 탈퇴 테스트")
+    void deleteCustomer() {
+        //given
+        Long customerId = customer.userId();
+
+        //when
+        customerService.deleteCustomer(customerId);
+
+        //then
+        assertThatThrownBy(() -> customerService.getCustomer(customerId)).isInstanceOf(
+            RuntimeException.class);
     }
 }

@@ -4,6 +4,7 @@ import jw.project.baemin.common.ApiResponse;
 import jw.project.baemin.customer.application.CustomerService;
 import jw.project.baemin.customer.presentation.request.CreateCustomerRequest;
 import jw.project.baemin.customer.presentation.request.UpdateCustomerRequest;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,5 +37,11 @@ public class CustomerController {
     public ApiResponse<?> updateCustomer(@PathVariable Long customerId,
         @RequestBody UpdateCustomerRequest request) {
         return ApiResponse.success(customerService.updateCustomer(customerId, request));
+    }
+
+    @DeleteMapping("/{customerId}")
+    public ApiResponse<?> deleteCustomer(@PathVariable Long customerId) {
+        customerService.deleteCustomer(customerId);
+        return ApiResponse.success(null);
     }
 }
