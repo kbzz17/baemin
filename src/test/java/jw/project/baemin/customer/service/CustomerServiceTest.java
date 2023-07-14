@@ -6,6 +6,7 @@ import jw.project.baemin.customer.application.CustomerService;
 import jw.project.baemin.customer.domain.Customer;
 import jw.project.baemin.customer.infrastructure.CustomerRepository;
 import jw.project.baemin.customer.presentation.request.CreateCustomerRequest;
+import jw.project.baemin.customer.presentation.request.UpdateCustomerRequest;
 import jw.project.baemin.customer.presentation.response.CustomerResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +31,7 @@ public class CustomerServiceTest {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public static Customer customer;
+    private static CustomerResponse customer;
 
     @BeforeEach
     void createCustomer() {
@@ -39,9 +40,9 @@ public class CustomerServiceTest {
             "yjw",
             "12341234");
 
-        CustomerResponse customer1 = customerService.createCustomer(request);
+        customer = customerService.createCustomer(request);
 
-        assertThat(customer1)
+        assertThat(customer)
             .extracting("email", "name")
             .contains("abcd@abcd.com", "yjw");
     }
@@ -50,7 +51,7 @@ public class CustomerServiceTest {
     @DisplayName("고객 정보 열람")
     void getCustomer() {
         //given
-        Long customerId = 1L;
+        Long customerId = customer.userId();
 
         //when
         CustomerResponse customer1 = customerService.getCustomer(customerId);
@@ -58,5 +59,22 @@ public class CustomerServiceTest {
         assertThat(customer1)
             .extracting("email", "name")
             .contains("abcd@abcd.com", "yjw");
+    }
+
+    @Test
+    @DisplayName("고객 정보 수정 테스트")
+    void updateCustomer() {
+        //given
+        Long customerId = customer.userId();
+        UpdateCustomerRequest request = new UpdateCustomerRequest("hbjh", "efg@efg.com",
+            "12345678");
+
+        //when
+        CustomerResponse updateCustomer = customerService.updateCustomer(customerId, request);
+
+        //then
+        assertThat(updateCustomer)
+            .extracting("email", "name", "userId")
+            .contains("efg@efg.com", "hbjh", customerId);
     }
 }

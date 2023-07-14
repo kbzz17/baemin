@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import jw.project.baemin.customer.presentation.request.UpdateCustomerRequest;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,4 +28,10 @@ public class Customer {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public void update(UpdateCustomerRequest request) {
+        this.name = request.name();
+        this.email = request.email();
+        this.password = request.password();
+    }
 }
