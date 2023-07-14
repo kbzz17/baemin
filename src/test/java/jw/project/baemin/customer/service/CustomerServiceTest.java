@@ -7,7 +7,9 @@ import jw.project.baemin.customer.domain.Customer;
 import jw.project.baemin.customer.infrastructure.CustomerRepository;
 import jw.project.baemin.customer.presentation.request.CreateCustomerRequest;
 import jw.project.baemin.customer.presentation.response.CustomerResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
@@ -30,8 +32,7 @@ public class CustomerServiceTest {
 
     public static Customer customer;
 
-    @Test
-    @DisplayName("고객 회원가입 테스트")
+    @BeforeEach
     void createCustomer() {
         CreateCustomerRequest request = new CreateCustomerRequest(
             "abcd@abcd.com",
@@ -41,7 +42,21 @@ public class CustomerServiceTest {
         CustomerResponse customer1 = customerService.createCustomer(request);
 
         assertThat(customer1)
-            .extracting("email","name")
-            .contains("abcd@abcd.com","yjw");
+            .extracting("email", "name")
+            .contains("abcd@abcd.com", "yjw");
+    }
+
+    @Test
+    @DisplayName("고객 정보 열람")
+    void getCustomer() {
+        //given
+        Long customerId = 1L;
+
+        //when
+        CustomerResponse customer1 = customerService.getCustomer(customerId);
+
+        assertThat(customer1)
+            .extracting("email", "name")
+            .contains("abcd@abcd.com", "yjw");
     }
 }

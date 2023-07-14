@@ -19,4 +19,10 @@ public class CustomerService {
         Customer customer = request.toEntity();
         return CustomerResponse.from(customerRepository.save(customer));
     }
+
+    public CustomerResponse getCustomer(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(RuntimeException::new);
+        return CustomerResponse.from(customer);
+    }
 }
