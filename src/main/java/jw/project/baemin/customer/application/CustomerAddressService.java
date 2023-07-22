@@ -65,6 +65,12 @@ public class CustomerAddressService {
         return CustomerAddressResponse.from(update);
     }
 
+    public void deleteCustomerAddress(Long customerId, Long addressId) {
+        Customer customer = validateFindByCustomerId(customerId);
+        CustomerAddress customerAddress = validateFindByAddressId(addressId);
+        customer.removeAddress(customerAddress);
+    }
+
     private Customer validateFindByCustomerId(Long customerId) {
         return customerRepository.findById(customerId).orElseThrow(RuntimeException::new);
     }

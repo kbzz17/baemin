@@ -7,6 +7,7 @@ import jw.project.baemin.customer.presentation.request.CustomerAddress.CreateCus
 import jw.project.baemin.customer.presentation.request.UpdateCustomerAddressRequest;
 import jw.project.baemin.customer.presentation.response.CustomerAddress.CustomerAddressResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +41,16 @@ public class CustomerAddressController {
 
     @PutMapping("/{customerId}")
     public ApiResponse<?> updateCustomerAddress(@PathVariable Long customerId,
-    @RequestBody UpdateCustomerAddressRequest request) {
+        @RequestBody UpdateCustomerAddressRequest request) {
+        CustomerAddressResponse response = customerAddressService.updateCustomerAddress(
+            customerId, request);
+        return ApiResponse.success(response);
+    }
+
+    @DeleteMapping("/{customerId}/{addressId}")
+    public ApiResponse<?> deleteCustomerAddress(@PathVariable Long customerId,
+        @PathVariable Long addressId) {
+        customerAddressService.deleteCustomerAddress(customerId,addressId);
         return ApiResponse.success(null);
     }
 }

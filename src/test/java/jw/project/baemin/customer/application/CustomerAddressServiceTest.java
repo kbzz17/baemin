@@ -1,10 +1,13 @@
 package jw.project.baemin.customer.application;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
 
 import java.util.List;
 import java.util.Optional;
@@ -134,5 +137,24 @@ class CustomerAddressServiceTest {
         assertThat(updateResponse)
             .extracting("name", "fullAddress", "mainAddress")
             .contains("Office", "서울특별시 성북구 돈암동 빙구아파트 2층", false);
+    }
+
+    @Test
+    @DisplayName("Customer Address 삭제 로직 테스트")
+    void removeCustomerAddress() {
+        Customer customer = CustomerSupport.get(1L);
+        CustomerAddress address1 = CustomerAddressSupport.get(1L);
+        CustomerAddress address2 = CustomerAddressSupport.get(2L, "Office", "서울특별시 광진구 중곡동");
+        customer.addAddress(address1);
+        customer.addAddress(address2);
+
+        given(customerRepository.findById(1L)).willReturn(Optional.of(customer));
+        given(customerAddressRepository.findById(1L)).willReturn(Optional.of(address1));
+
+        customerAddressService.deleteCustomerAddress(1L, 1L);
+
+        assertThat(customer.getAddresses()).hasSize(1);
+        assertThat(customer.getAddresses()).doesNotContain(address1);
+        assertThat(customer.getAddresses()).contains(address2);
     }
 }

@@ -48,4 +48,8 @@ public class Customer {
     public void addAddress(CustomerAddress customerAddress) {
         addresses.add(customerAddress);
     }
+
+    public void removeAddress(CustomerAddress customerAddress){
+        this.addresses.remove(customerAddress);
+    }
 }
