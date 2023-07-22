@@ -7,6 +7,7 @@ import jw.project.baemin.customer.domain.CustomerAddress;
 import jw.project.baemin.customer.infrastructure.CustomerAddressRepository;
 import jw.project.baemin.customer.infrastructure.CustomerRepository;
 import jw.project.baemin.customer.presentation.request.CustomerAddress.CreateCustomerAddressRequest;
+import jw.project.baemin.customer.presentation.request.UpdateCustomerAddressRequest;
 import jw.project.baemin.customer.presentation.response.CustomerAddress.CustomerAddressResponse;
 import jw.project.baemin.region.application.RegionService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ public class CustomerAddressService {
 
     private final RegionService regionService;
     private final CustomerRepository customerRepository;
+
+    private final CustomerAddressRepository customerAddressRepository;
 
     public CustomerAddressResponse createCustomerAddress(
         Long customerId,
@@ -44,8 +47,30 @@ public class CustomerAddressService {
             .collect(Collectors.toList());
     }
 
+    public CustomerAddressResponse updateCustomerAddress(Long id,
+        UpdateCustomerAddressRequest request) {
+        CustomerAddress customerAddress = validateFindByAddressId(id);
+
+        Long updateRegionId = regionService.findByRegionAddress(request.regionAddress()).getId();
+
+        customerAddress.update(
+            request.addressName(),
+            request.regionAddress(),
+            request.detailAddress(),
+            request.isMainAddress(),
+            updateRegionId);
+
+        CustomerAddress update = customerAddressRepository.save(customerAddress);
+
+        return CustomerAddressResponse.from(update);
+    }
+
     private Customer validateFindByCustomerId(Long customerId) {
         return customerRepository.findById(customerId).orElseThrow(RuntimeException::new);
+    }
+
+    private CustomerAddress validateFindByAddressId(Long addressId) {
+        return customerAddressRepository.findById(addressId).orElseThrow(RuntimeException::new);
     }
 
 }

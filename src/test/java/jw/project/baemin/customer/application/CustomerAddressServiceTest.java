@@ -2,6 +2,7 @@ package jw.project.baemin.customer.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
@@ -9,13 +10,16 @@ import java.util.List;
 import java.util.Optional;
 import jw.project.baemin.customer.domain.Customer;
 import jw.project.baemin.customer.domain.CustomerAddress;
+import jw.project.baemin.customer.infrastructure.CustomerAddressRepository;
 import jw.project.baemin.customer.infrastructure.CustomerRepository;
 import jw.project.baemin.customer.presentation.request.CustomerAddress.CreateCustomerAddressRequest;
+import jw.project.baemin.customer.presentation.request.UpdateCustomerAddressRequest;
 import jw.project.baemin.customer.presentation.response.CustomerAddress.CustomerAddressResponse;
 import jw.project.baemin.support.CustomerAddressSupport;
 import jw.project.baemin.support.CustomerSupport;
 import jw.project.baemin.region.application.RegionService;
 import jw.project.baemin.region.domain.RegionCode;
+import jw.project.baemin.support.RegionSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +41,9 @@ class CustomerAddressServiceTest {
 
     @MockBean
     CustomerRepository customerRepository;
+
+    @MockBean
+    CustomerAddressRepository customerAddressRepository;
 
     @MockBean
     RegionService regionService;
@@ -101,5 +108,31 @@ class CustomerAddressServiceTest {
         assertThat(customerAddresses).hasSize(2);
         assertThat(customerAddresses).contains(CustomerAddressResponse.from(address1),
             CustomerAddressResponse.from(address2));
+    }
+
+    @Test
+    @DisplayName("Customer Address 수정 로직 테스트")
+    void updateCustomerAddress() {
+        CustomerAddress customerAddress = CustomerAddressSupport.get(1L);
+
+        RegionCode regionCode = RegionSupport.get(1L);
+
+        UpdateCustomerAddressRequest request = new UpdateCustomerAddressRequest(
+            "Office",
+            "서울특별시 성북구 돈암동",
+            "빙구아파트 2층",
+            false);
+
+        given(customerAddressRepository.findById(anyLong())).willReturn(
+            Optional.of(customerAddress));
+        given(regionService.findByRegionAddress(anyString())).willReturn(regionCode);
+        given(customerAddressRepository.save(any())).willReturn(customerAddress);
+
+        CustomerAddressResponse updateResponse = customerAddressService.updateCustomerAddress(
+            1L, request);
+
+        assertThat(updateResponse)
+            .extracting("name", "fullAddress", "mainAddress")
+            .contains("Office", "서울특별시 성북구 돈암동 빙구아파트 2층", false);
     }
 }

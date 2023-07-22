@@ -46,6 +46,19 @@ public class CustomerAddress {
         this.regionId = regionId;
     }
 
+    public String getFullAddress() {
+        return this.regionAddress + " " + this.detailAddress;
+    }
+
+    public void update(String addressName, String regionAddress, String detailAddress,
+        Boolean isMainAddress, Long regionId) {
+        this.addressName = addressName;
+        this.regionAddress = regionAddress;
+        this.detailAddress = detailAddress;
+        this.mainAddress = isMainAddress;
+        this.regionId = regionId;
+    }
+
     private static String registerWithDefaultName(String addressName, String fullAddress) {
         if (addressName.isBlank()) {
             return fullAddress;
@@ -53,7 +66,5 @@ public class CustomerAddress {
         return addressName;
     }
 
-    public String getFullAddress() {
-        return this.regionAddress + " " + this.detailAddress;
-    }
+
 }
