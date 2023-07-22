@@ -25,6 +25,12 @@ public class RegionService {
         }
     }
 
+    public RegionCode findByRegionAddress(String regionAddress) {
+        return regionRepository.findByRegionAddress(regionAddress)
+            .orElseThrow(RuntimeException::new);
+    }
+
+
     private List<RegionCode> parseRegions() {
         String regionFileName = "RegionFile.txt";
         return Objects.requireNonNull(FileUtil.parseTxtFile(regionFileName))
