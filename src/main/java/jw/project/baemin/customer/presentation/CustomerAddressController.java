@@ -1,9 +1,12 @@
 package jw.project.baemin.customer.presentation;
 
+import java.util.List;
 import jw.project.baemin.common.ApiResponse;
 import jw.project.baemin.customer.application.CustomerAddressService;
 import jw.project.baemin.customer.presentation.request.CustomerAddress.CreateCustomerAddressRequest;
+import jw.project.baemin.customer.presentation.response.CustomerAddress.CustomerAddressResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,5 +26,13 @@ public class CustomerAddressController {
         @RequestBody CreateCustomerAddressRequest request) {
         return ApiResponse.success(
             customerAddressService.createCustomerAddress(customerId, request));
+    }
+
+    @GetMapping("/{customerId}")
+    public ApiResponse<?> findCustomerAddress(@PathVariable Long customerId) {
+        List<CustomerAddressResponse> response =
+            customerAddressService.findCustomerAddresses(customerId);
+
+        return ApiResponse.success(response);
     }
 }

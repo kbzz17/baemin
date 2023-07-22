@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 public class CustomerAddressService {
 
     private final RegionService regionService;
-    private final CustomerService customerService;
     private final CustomerRepository customerRepository;
-    private final CustomerAddressRepository customerAddressRepository;
 
     public CustomerAddressResponse createCustomerAddress(
         Long customerId,
@@ -38,11 +36,16 @@ public class CustomerAddressService {
         return CustomerAddressResponse.from(customerAddress);
     }
 
-    public List<CustomerAddressResponse> searchCustomerAddresses(Long customerId) {
-        return customerAddressRepository.findByCustomerId(customerId)
+    public List<CustomerAddressResponse> findCustomerAddresses(Long customerId) {
+        Customer customer = validateFindByCustomerId(customerId);
+        return customer.getAddresses()
             .stream()
             .map(CustomerAddressResponse::from)
             .collect(Collectors.toList());
+    }
+
+    private Customer validateFindByCustomerId(Long customerId) {
+        return customerRepository.findById(customerId).orElseThrow(RuntimeException::new);
     }
 
 }

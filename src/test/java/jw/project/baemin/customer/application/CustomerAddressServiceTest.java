@@ -1,16 +1,19 @@
-package jw.project.baemin.customer.service;
+package jw.project.baemin.customer.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import jw.project.baemin.customer.application.CustomerAddressService;
 import jw.project.baemin.customer.domain.Customer;
+import jw.project.baemin.customer.domain.CustomerAddress;
 import jw.project.baemin.customer.infrastructure.CustomerRepository;
 import jw.project.baemin.customer.presentation.request.CustomerAddress.CreateCustomerAddressRequest;
 import jw.project.baemin.customer.presentation.response.CustomerAddress.CustomerAddressResponse;
+import jw.project.baemin.support.CustomerAddressSupport;
+import jw.project.baemin.support.CustomerSupport;
 import jw.project.baemin.region.application.RegionService;
 import jw.project.baemin.region.domain.RegionCode;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +34,7 @@ class CustomerAddressServiceTest {
 
     @Autowired
     CustomerAddressService customerAddressService;
+
     @MockBean
     CustomerRepository customerRepository;
 
@@ -42,21 +46,12 @@ class CustomerAddressServiceTest {
     void createCustomerAddressTest() {
         // Given
         Long customerId = 1L;
-        String customerEmail = "poujis@naver.com";
-        String customerName = "yjw";
-        String customerPassword = "1234";
-        String addressName = "Home";
+        String addressName = "서울특별시 중랑구 면목동";
         String detailAddress = "빙구아파트 101호";
         String regionAddress = "서울특별시 중랑구 면목동";
         boolean isMainAddress = true;
 
-        Customer customer = Customer.builder()
-            .id(customerId)
-            .email(customerEmail)
-            .name(customerName)
-            .password(customerPassword)
-            .addresses(new ArrayList<>())
-            .build();
+        Customer customer = CustomerSupport.get(customerId);
 
         CreateCustomerAddressRequest request = new CreateCustomerAddressRequest(
             addressName,
@@ -70,7 +65,7 @@ class CustomerAddressServiceTest {
             .regionAddress("서울특별시 중랑구 면목동").build();
 
         given(customerRepository.findById(customerId)).willReturn(Optional.of(customer));
-        given(regionService.findByRegionAddress(regionAddress)).willReturn(regionCode);
+        given(regionService.findByRegionAddress(anyString())).willReturn(regionCode);
         given(customerRepository.save(any())).willReturn(customer);
 
         // When
@@ -79,7 +74,32 @@ class CustomerAddressServiceTest {
 
         // Then
         assertThat(createCustomerAddressResponse.name()).isEqualTo(addressName);
-        assertThat(createCustomerAddressResponse.fullAddress()).isEqualTo(regionAddress + " " + detailAddress);
+        assertThat(createCustomerAddressResponse.fullAddress()).isEqualTo(
+            regionAddress + " " + detailAddress);
         assertThat(createCustomerAddressResponse.mainAddress()).isEqualTo(isMainAddress);
+    }
+
+    @Test
+    @DisplayName("고객이 등록한 모든 주소들을 검색하는 기능")
+    void findCustomerAddresses() {
+        //given
+        Customer customer = CustomerSupport.get(1L);
+
+        CustomerAddress address1 = CustomerAddressSupport.get(1L);
+        CustomerAddress address2 = CustomerAddressSupport.get(2L, "Office", "서울특별시 광진구 중곡동");
+
+        customer.addAddress(address1);
+        customer.addAddress(address2);
+
+        given(customerRepository.findById(1L)).willReturn(Optional.of(customer));
+
+        //when
+        List<CustomerAddressResponse> customerAddresses = customerAddressService.findCustomerAddresses(
+            1L);
+
+        //then
+        assertThat(customerAddresses).hasSize(2);
+        assertThat(customerAddresses).contains(CustomerAddressResponse.from(address1),
+            CustomerAddressResponse.from(address2));
     }
 }
