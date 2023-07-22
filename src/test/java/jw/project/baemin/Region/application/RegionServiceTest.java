@@ -1,6 +1,7 @@
-package jw.project.baemin.Region;
+package jw.project.baemin.Region.application;
 
 import jw.project.baemin.region.application.RegionService;
+import jw.project.baemin.region.domain.RegionCode;
 import jw.project.baemin.region.repository.RegionRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -32,4 +33,13 @@ public class RegionServiceTest {
         Assertions.assertThat(count).isEqualTo(493);
     }
 
+    @Test
+    @DisplayName("findByRegionAddress 테스트 ")
+    void findByRegionAddressTest() {
+        //when
+        RegionCode address = regionService.findByRegionAddress("서울특별시 중랑구 면목동");
+
+        //then
+        Assertions.assertThat("1126010100").isEqualTo(address.getCode());
+    }
 }
