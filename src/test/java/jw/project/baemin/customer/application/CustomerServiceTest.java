@@ -1,17 +1,13 @@
-package jw.project.baemin.customer.service;
+package jw.project.baemin.customer.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import jw.project.baemin.customer.application.CustomerService;
-import jw.project.baemin.customer.domain.Customer;
 import jw.project.baemin.customer.infrastructure.CustomerRepository;
 import jw.project.baemin.customer.presentation.request.CreateCustomerRequest;
 import jw.project.baemin.customer.presentation.request.UpdateCustomerRequest;
 import jw.project.baemin.customer.presentation.response.CustomerResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
