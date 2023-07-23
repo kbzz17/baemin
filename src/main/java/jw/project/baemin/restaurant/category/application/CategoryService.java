@@ -8,7 +8,6 @@ import jw.project.baemin.restaurant.category.presentation.request.CreateCategory
 import jw.project.baemin.restaurant.category.presentation.request.UpdateCategoryRequest;
 import jw.project.baemin.restaurant.category.presentation.response.CategoryResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,5 +39,10 @@ public class CategoryService {
             .orElseThrow(RuntimeException::new);
         category.update(request.name());
         return CategoryResponse.from(category);
+    }
+
+    public Long deleteCategory(Long categoryId) {
+        categoryRepository.deleteById(categoryId);
+        return categoryId;
     }
 }

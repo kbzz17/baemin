@@ -5,6 +5,7 @@ import jw.project.baemin.restaurant.category.application.CategoryService;
 import jw.project.baemin.restaurant.category.presentation.request.CreateCategoryRequest;
 import jw.project.baemin.restaurant.category.presentation.request.UpdateCategoryRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,11 @@ public class CategoryController {
     public ApiResponse<?> updateCategory(@PathVariable Long categoryId, @RequestBody
     UpdateCategoryRequest request) {
         return ApiResponse.success(categoryService.updateCategory(categoryId, request));
+    }
+
+    @DeleteMapping("/{categoryId}")
+    public ApiResponse<?> deleteCategory(@PathVariable Long categoryId){
+        return ApiResponse.success(categoryService.deleteCategory(categoryId));
     }
 
 }

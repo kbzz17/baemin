@@ -1,9 +1,14 @@
 package jw.project.baemin.restaurant.category.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,5 +93,15 @@ public class CategoryServiceTest extends IntegrationTestSupport {
 
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.name()).isEqualTo("중식");
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제 기능 테스트")
+    void deleteCategoryTest() {
+        willDoNothing().given(categoryRepository).deleteById(1L);
+
+        Long result = categoryService.deleteCategory(1L);
+
+        then(categoryRepository).should(times(1)).deleteById(1L);
     }
 }
