@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import jw.project.baemin.customer.domain.Coupon;
 import jw.project.baemin.customer.domain.Customer;
@@ -17,7 +18,6 @@ import jw.project.baemin.customer.presentation.request.coupon.CreateCouponReques
 import jw.project.baemin.customer.presentation.response.coupon.CouponResponse;
 import jw.project.baemin.support.CouponSupport;
 import jw.project.baemin.support.CustomerSupport;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +74,41 @@ public class CouponServiceTest {
         assertThat(result).extracting("id", "couponType", "name", "code", "expiredDate",
                 "discountAmount")
             .contains(1L, CouponType.FIXED, "말복쿠폰", "100101", coupon.getExpiredDate(), 3000);
+    }
+
+    @Test
+    @DisplayName("쿠폰 검색 기능 테스트")
+    void findCouponTest() {
+        Coupon coupon = CouponSupport.get(1L);
+
+        given(couponRepository.findById(anyLong())).willReturn(Optional.of(coupon));
+
+        CouponResponse result = couponService.findCoupon(1L);
+
+        assertThat(result).extracting("id", "couponType", "name", "code", "expiredDate",
+                "discountAmount")
+            .contains(1L, coupon.getCouponType(), coupon.getName(), coupon.getCode(),
+                coupon.getExpiredDate(), coupon.getDiscountAmount());
+    }
+
+    @Test
+    @DisplayName("유저의 모든 쿠폰 검색하는 기능 테스트")
+    void findUserCoupons() {
+        Customer customer = CustomerSupport.get(1L);
+
+        Coupon coupon1 = CouponSupport.get(1L);
+        Coupon coupon2 = CouponSupport.get(2L);
+
+        customer.addCoupon(coupon1);
+        customer.addCoupon(coupon2);
+
+        given(customerRepository.findById(anyLong())).willReturn(Optional.of(customer));
+
+        List<CouponResponse> userCoupons = couponService.findUserCoupons(1L);
+
+        assertThat(userCoupons).hasSize(2);
+        assertThat(userCoupons).contains(CouponResponse.from(coupon1),
+            CouponResponse.from(coupon2));
+
     }
 }

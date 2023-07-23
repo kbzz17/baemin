@@ -1,5 +1,7 @@
 package jw.project.baemin.customer.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import jw.project.baemin.customer.domain.Coupon;
 import jw.project.baemin.customer.domain.Customer;
 import jw.project.baemin.customer.infrastructure.CouponRepository;
@@ -20,7 +22,7 @@ public class CouponService {
 
     public CouponResponse createCoupon(CreateCouponRequest request) {
         Coupon coupon = request.toEntity();
-        if (coupon.hasExpired()){
+        if (coupon.hasExpired()) {
             throw new RuntimeException();
         }
         coupon = couponRepository.save(coupon);
@@ -39,5 +41,19 @@ public class CouponService {
         customerRepository.save(customer);
 
         return CouponResponse.from(coupon);
+    }
+
+    public CouponResponse findCoupon(Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId).orElseThrow(RuntimeException::new);
+        return CouponResponse.from(coupon);
+    }
+
+    public List<CouponResponse> findUserCoupons(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+            .orElseThrow(RuntimeException::new);
+        return customer.getCoupons()
+            .stream()
+            .map(CouponResponse::from)
+            .collect(Collectors.toList());
     }
 }
