@@ -6,7 +6,6 @@ import jw.project.baemin.customer.domain.Coupon;
 import jw.project.baemin.customer.domain.enums.CouponType;
 import lombok.Getter;
 
-@Getter
 public record CreateCouponRequest(String name, CouponType couponType,
                                   Integer discountAmount, LocalDateTime expiredDate) {
 
