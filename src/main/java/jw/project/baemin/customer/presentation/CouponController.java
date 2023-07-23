@@ -24,6 +24,6 @@ public class CouponController {
 
     @PostMapping("/register/{customerId}/code/{code}")
     public ApiResponse<?> registerCoupon(@PathVariable Long customerId, @PathVariable String code) {
-        return ApiResponse.success(null);
+        return ApiResponse.success(couponService.registerCoupon(customerId, code));
     }
 }
