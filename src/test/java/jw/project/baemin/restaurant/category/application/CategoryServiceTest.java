@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import jw.project.baemin.restaurant.category.domain.Category;
 import jw.project.baemin.restaurant.category.infrastructure.CategoryRepository;
@@ -51,5 +53,25 @@ public class CategoryServiceTest extends IntegrationTestSupport {
 
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.name()).isEqualTo("한식");
+    }
+
+    @Test
+    @DisplayName("모든 카테고리 검색 기능 테스트")
+    void findAllCategories() {
+        List<Category> categories = new ArrayList<>();
+        Category category1 = new Category(1L, "한식");
+        Category category2 = new Category(2L, "양식");
+        Category category3 = new Category(3L, "중식");
+        categories.add(category1);
+        categories.add(category2);
+        categories.add(category3);
+
+        given(categoryRepository.findAll()).willReturn(categories);
+
+        List<CategoryResponse> allCategories = categoryService.findAllCategories();
+
+        assertThat(allCategories).hasSize(3);
+        assertThat(allCategories).contains(CategoryResponse.from(category1),
+            CategoryResponse.from(category2), CategoryResponse.from(category3));
     }
 }

@@ -1,5 +1,7 @@
 package jw.project.baemin.restaurant.category.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import jw.project.baemin.restaurant.category.domain.Category;
 import jw.project.baemin.restaurant.category.infrastructure.CategoryRepository;
 import jw.project.baemin.restaurant.category.presentation.request.CreateCategoryRequest;
@@ -23,5 +25,12 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId).orElseThrow(
             RuntimeException::new);
         return CategoryResponse.from(category);
+    }
+
+    public List<CategoryResponse> findAllCategories() {
+        return categoryRepository.findAll()
+            .stream()
+            .map(CategoryResponse::from)
+            .collect(Collectors.toList());
     }
 }

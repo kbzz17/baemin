@@ -27,4 +27,9 @@ public class CategoryController {
         return ApiResponse.success(categoryService.findCategory(categoryId));
     }
 
+    @GetMapping("/all")
+    public ApiResponse<?> findAllCategories(){
+        return ApiResponse.success(categoryService.findAllCategories());
+    }
+
 }
