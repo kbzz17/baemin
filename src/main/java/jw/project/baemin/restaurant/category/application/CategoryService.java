@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import jw.project.baemin.restaurant.category.domain.Category;
 import jw.project.baemin.restaurant.category.infrastructure.CategoryRepository;
 import jw.project.baemin.restaurant.category.presentation.request.CreateCategoryRequest;
+import jw.project.baemin.restaurant.category.presentation.request.UpdateCategoryRequest;
 import jw.project.baemin.restaurant.category.presentation.response.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -32,5 +33,12 @@ public class CategoryService {
             .stream()
             .map(CategoryResponse::from)
             .collect(Collectors.toList());
+    }
+
+    public CategoryResponse updateCategory(Long categoryId, UpdateCategoryRequest request) {
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(RuntimeException::new);
+        category.update(request.name());
+        return CategoryResponse.from(category);
     }
 }

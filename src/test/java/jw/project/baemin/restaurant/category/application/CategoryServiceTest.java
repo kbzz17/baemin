@@ -11,6 +11,7 @@ import java.util.Optional;
 import jw.project.baemin.restaurant.category.domain.Category;
 import jw.project.baemin.restaurant.category.infrastructure.CategoryRepository;
 import jw.project.baemin.restaurant.category.presentation.request.CreateCategoryRequest;
+import jw.project.baemin.restaurant.category.presentation.request.UpdateCategoryRequest;
 import jw.project.baemin.restaurant.category.presentation.response.CategoryResponse;
 import jw.project.baemin.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
@@ -73,5 +74,19 @@ public class CategoryServiceTest extends IntegrationTestSupport {
         assertThat(allCategories).hasSize(3);
         assertThat(allCategories).contains(CategoryResponse.from(category1),
             CategoryResponse.from(category2), CategoryResponse.from(category3));
+    }
+
+    @Test
+    @DisplayName("카테고리 수정 기능 테스트")
+    void updateCategoryTest() {
+        Category category = new Category(1L, "한식");
+        UpdateCategoryRequest request = new UpdateCategoryRequest("중식");
+
+        given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
+
+        CategoryResponse result = categoryService.updateCategory(1L, request);
+
+        assertThat(result.id()).isEqualTo(1L);
+        assertThat(result.name()).isEqualTo("중식");
     }
 }
