@@ -36,6 +36,10 @@ public class Customer {
     @Builder.Default
     private List<CustomerAddress> addresses = new ArrayList<>();
 
+    @OneToMany(orphanRemoval = true)
+    @Builder.Default
+    private List<Coupon> coupons = new ArrayList<>();
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -49,7 +53,11 @@ public class Customer {
         addresses.add(customerAddress);
     }
 
-    public void removeAddress(CustomerAddress customerAddress){
+    public void removeAddress(CustomerAddress customerAddress) {
         this.addresses.remove(customerAddress);
+    }
+
+    public void addCoupon(Coupon coupon) {
+        this.coupons.add(coupon);
     }
 }

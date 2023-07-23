@@ -36,4 +36,8 @@ public class Coupon {
     private Boolean isUse;
 
     private LocalDateTime expiredDate;
+
+    public Boolean hasExpired(){
+        return LocalDateTime.now().isAfter(this.expiredDate);
+    }
 }
