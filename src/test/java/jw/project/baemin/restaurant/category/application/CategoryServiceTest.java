@@ -2,8 +2,10 @@ package jw.project.baemin.restaurant.category.application;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
+import java.util.Optional;
 import jw.project.baemin.restaurant.category.domain.Category;
 import jw.project.baemin.restaurant.category.infrastructure.CategoryRepository;
 import jw.project.baemin.restaurant.category.presentation.request.CreateCategoryRequest;
@@ -36,5 +38,18 @@ public class CategoryServiceTest extends IntegrationTestSupport {
 
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.name()).isEqualTo("한식");
+    }
+
+    @Test
+    @DisplayName("카테고리 검색 기능 테스트")
+    void findCategory() {
+        Category category = new Category(1L, "한식");
+
+        given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
+
+        CategoryResponse result = categoryService.findCategory(1L);
+
+        assertThat(result.id()).isEqualTo(1L);
+        assertThat(result.name()).isEqualTo("한식");
     }
 }

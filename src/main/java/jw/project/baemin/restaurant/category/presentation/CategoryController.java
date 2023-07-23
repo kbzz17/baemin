@@ -4,6 +4,7 @@ import jw.project.baemin.common.ApiResponse;
 import jw.project.baemin.restaurant.category.application.CategoryService;
 import jw.project.baemin.restaurant.category.presentation.request.CreateCategoryRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +18,13 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ApiResponse<?> createCategory(@RequestBody CreateCategoryRequest request){
+    public ApiResponse<?> createCategory(@RequestBody CreateCategoryRequest request) {
         return ApiResponse.success(categoryService.createCategory(request));
+    }
+
+    @GetMapping
+    public ApiResponse<?> findCategory(Long categoryId) {
+        return ApiResponse.success(categoryService.findCategory(categoryId));
     }
 
 }

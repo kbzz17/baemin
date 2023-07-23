@@ -5,6 +5,7 @@ import jw.project.baemin.restaurant.category.infrastructure.CategoryRepository;
 import jw.project.baemin.restaurant.category.presentation.request.CreateCategoryRequest;
 import jw.project.baemin.restaurant.category.presentation.response.CategoryResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,5 +17,11 @@ public class CategoryService {
     public CategoryResponse createCategory(CreateCategoryRequest request) {
         Category category = request.toEntity();
         return CategoryResponse.from(categoryRepository.save(category));
+    }
+
+    public CategoryResponse findCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+            RuntimeException::new);
+        return CategoryResponse.from(category);
     }
 }
