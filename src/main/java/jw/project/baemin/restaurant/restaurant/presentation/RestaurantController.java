@@ -58,11 +58,12 @@ public class RestaurantController {
         return ApiResponse.success(restaurantService.changeRestaurantStatus(restaurantId));
     }
 
-    @PostMapping("/{restaurantId/supportPayment/{supportPayment}")
+    @PostMapping("/{restaurantId}/supportPayment/{supportPayment}")
     public ApiResponse<?> changeSupportPayment(@PathVariable Long restaurantId, @PathVariable
-    SupportPayment supportPayment) {
+    String supportPayment) {
         return ApiResponse.success(
-            restaurantService.changeSupportPayment(restaurantId, supportPayment));
+            restaurantService.changeSupportPayment(restaurantId,
+                SupportPayment.valueOf(supportPayment)));
     }
 
     @PostMapping("/{restaurantId}/orderType/{orderType}")
@@ -72,4 +73,17 @@ public class RestaurantController {
         return ApiResponse.success(restaurantService.changeOrderType(restaurantId, orderType));
     }
 
+    @PostMapping("/{restaurantId}/category/{categoryId}")
+    public ApiResponse<?> addCategory(@PathVariable Long restaurantId,
+        @PathVariable Long categoryId) {
+        return ApiResponse.success(
+            restaurantService.addRestaurantCategory(restaurantId, categoryId));
+    }
+
+    @DeleteMapping("/{restaurantId}/category/{categoryId}")
+    public ApiResponse<?> deleteCategory(@PathVariable Long restaurantId,
+        @PathVariable Long categoryId) {
+        return ApiResponse.success(
+            restaurantService.deleteRestaurantCategory(restaurantId, categoryId));
+    }
 }

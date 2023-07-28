@@ -2,6 +2,7 @@ package jw.project.baemin.restaurant.restaurant.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import jw.project.baemin.restaurant.category.application.CategoryService;
 import jw.project.baemin.restaurant.restaurant.domain.Restaurant;
 import jw.project.baemin.restaurant.restaurant.domain.eums.OrderType;
 import jw.project.baemin.restaurant.restaurant.domain.eums.SupportPayment;
@@ -9,6 +10,9 @@ import jw.project.baemin.restaurant.restaurant.infrastructure.RestaurantReposito
 import jw.project.baemin.restaurant.restaurant.presentation.request.CreateRestaurantRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.request.UpdateRestaurantRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.response.RestaurantResponse;
+import jw.project.baemin.restaurant.restaurantCategory.domain.RestaurantCategory;
+import jw.project.baemin.restaurant.restaurantCategory.domain.RestaurantCategoryId;
+import jw.project.baemin.restaurant.restaurantCategory.infrastructure.RestaurantCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,10 @@ import org.springframework.stereotype.Service;
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+
+    private final RestaurantCategoryRepository restaurantCategoryRepository;
+
+    private final CategoryService categoryService;
 
     public RestaurantResponse createRestaurantByOwnerId(Long ownerId,
         CreateRestaurantRequest request) {
@@ -63,6 +71,18 @@ public class RestaurantService {
         Restaurant restaurant = validFindRestaurantById(restaurantId);
         restaurant.changeSupportPayment(supportPayment);
         return restaurantRepository.save(restaurant).getId();
+    }
+
+    public Long addRestaurantCategory(Long restaurantId, Long categoryId) {
+        Restaurant restaurant = validFindRestaurantById(restaurantId);
+
+        RestaurantCategory restaurantCategory = new RestaurantCategory(restaurant, categoryId);
+        restaurant.addCategory(restaurantCategory);
+        return restaurantRepository.save(restaurant).getId();
+    }
+
+    public Long deleteRestaurantCategory(Long restaurantId, Long categoryId) {
+        return restaurantCategoryRepository.deleteByRestaurantIdAndCategoryId(restaurantId, categoryId);
     }
 
     private Restaurant validFindRestaurantById(Long restaurantId) {
