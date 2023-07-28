@@ -2,18 +2,23 @@ package jw.project.baemin.restaurant.restaurant.domain;
 
 import static jw.project.baemin.restaurant.restaurant.domain.eums.ShopStatus.*;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import jw.project.baemin.restaurant.restaurant.domain.eums.OrderType;
 import jw.project.baemin.restaurant.restaurant.domain.eums.ShopStatus;
 import jw.project.baemin.restaurant.restaurant.domain.eums.SupportPayment;
 import jw.project.baemin.restaurant.restaurant.presentation.request.UpdateRestaurantRequest;
+import jw.project.baemin.restaurant.restaurantCategory.domain.RestaurantCategory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,6 +65,10 @@ public class Restaurant {
 
     private Long reviewCount;
 
+    @OneToMany(mappedBy = "restaurant", orphanRemoval = true, cascade = CascadeType.ALL)
+    @Builder.Default
+    List<RestaurantCategory> categories = new ArrayList<>();
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -72,6 +81,10 @@ public class Restaurant {
         this.closeTime = request.closeTime();
         this.description = request.description();
         this.phoneNumber = request.phoneNumber();
+    }
+
+    public void addCategory(RestaurantCategory category) {
+        categories.add(category);
     }
 
     public void changeStatus() {
