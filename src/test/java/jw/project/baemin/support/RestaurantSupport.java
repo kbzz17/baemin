@@ -2,6 +2,8 @@ package jw.project.baemin.support;
 
 import java.time.LocalTime;
 import jw.project.baemin.restaurant.restaurant.domain.Restaurant;
+import jw.project.baemin.restaurant.restaurant.domain.eums.OrderType;
+import jw.project.baemin.restaurant.restaurant.domain.eums.SupportPayment;
 import jw.project.baemin.restaurant.restaurant.presentation.request.CreateRestaurantRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.request.UpdateRestaurantRequest;
 
@@ -19,6 +21,10 @@ public class RestaurantSupport {
     private static final Double starRating = 4.9D;
     private static final Long reviewCount = 500L;
 
+    private static final OrderType orderType = OrderType.DELIVERY;
+
+    private static final SupportPayment supportPayment = SupportPayment.CARD;
+
     public static Restaurant get(Long id) {
         return Restaurant.builder()
             .id(1L)
@@ -27,17 +33,20 @@ public class RestaurantSupport {
             .address(address)
             .openTime(openTime)
             .closeTime(closeTime)
-            .isOpen(isOpen)
             .phoneNumber(phoneNumber)
             .description(description)
             .starRating(starRating)
             .reviewCount(reviewCount)
+            .orderType(orderType)
+            .supportedPayment(supportPayment)
             .build();
     }
 
     public static CreateRestaurantRequest getCreateRestaurantRequest() {
-        return new CreateRestaurantRequest(ownerId, name, address, openTime, closeTime, isOpen,
-            phoneNumber, description, starRating, reviewCount);
+        return new CreateRestaurantRequest(ownerId, name, address, openTime,
+            closeTime, isOpen, phoneNumber,
+            description, starRating, reviewCount,
+            orderType, supportPayment);
     }
 
     public static UpdateRestaurantRequest getUpdateRestaurantRequest() {

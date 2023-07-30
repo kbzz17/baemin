@@ -15,11 +15,14 @@ import jw.project.baemin.restaurant.restaurant.infrastructure.RestaurantReposito
 import jw.project.baemin.restaurant.restaurant.presentation.request.CreateRestaurantRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.request.UpdateRestaurantRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.response.RestaurantResponse;
+import jw.project.baemin.restaurant.restaurantCategory.domain.RestaurantCategory;
+import jw.project.baemin.restaurant.restaurantCategory.infrastructure.RestaurantCategoryRepository;
 import jw.project.baemin.support.IntegrationTestSupport;
 import jw.project.baemin.support.RestaurantSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -30,6 +33,9 @@ public class RestaurantServiceTest extends IntegrationTestSupport {
 
     @MockBean
     RestaurantRepository restaurantRepository;
+
+    @Mock
+    RestaurantCategoryRepository restaurantCategoryRepository;
 
     @Test
     @DisplayName("식당 등록 기능 테스트")
@@ -85,6 +91,7 @@ public class RestaurantServiceTest extends IntegrationTestSupport {
 
         given(restaurantRepository.findByOwnerIdAndRestaurantId(anyLong(), anyLong())).willReturn(
             Optional.of(restaurant));
+        given(restaurantRepository.findById(anyLong())).willReturn(Optional.of(restaurant));
         restaurant.update(request);
         given(restaurantRepository.save(any())).willReturn(restaurant);
 
@@ -95,5 +102,23 @@ public class RestaurantServiceTest extends IntegrationTestSupport {
         assertThat(result.closeTime()).isEqualTo(LocalTime.MIDNIGHT);
         assertThat(result.address()).isEqualTo("서울시 강남구 역삼동");
         assertThat(result.description()).isEqualTo("아이우에오");
+    }
+
+    @Test
+    @DisplayName("식당 카테고리 추가 기능 테스트")
+    void addCategory() {
+        Restaurant restaurant = RestaurantSupport.get(1L);
+
+        RestaurantCategory restaurantCategory1 = new RestaurantCategory(restaurant, 1L);
+        RestaurantCategory restaurantCategory2 = new RestaurantCategory(restaurant, 2L);
+        given(restaurantRepository.findById(anyLong())).willReturn(Optional.of(restaurant));
+        restaurant.addCategory(restaurantCategory1);
+        restaurant.addCategory(restaurantCategory2);
+        given(restaurantRepository.save(any())).willReturn(restaurant);
+
+        Long aLong = restaurantService.addRestaurantCategory(1L, 1L);
+
+        assertThat(aLong).isEqualTo(1L);
+
     }
 }
