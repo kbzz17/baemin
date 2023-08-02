@@ -89,7 +89,7 @@ public class RestaurantServiceTest extends IntegrationTestSupport {
         Restaurant restaurant = RestaurantSupport.get(1L);
         UpdateRestaurantRequest request = RestaurantSupport.getUpdateRestaurantRequest();
 
-        given(restaurantRepository.findByOwnerIdAndRestaurantId(anyLong(), anyLong())).willReturn(
+        given(restaurantRepository.findByOwnerIdAndId(anyLong(), anyLong())).willReturn(
             Optional.of(restaurant));
         given(restaurantRepository.findById(anyLong())).willReturn(Optional.of(restaurant));
         restaurant.update(request);
