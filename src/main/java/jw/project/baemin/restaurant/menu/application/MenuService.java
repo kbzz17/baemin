@@ -44,6 +44,13 @@ public class MenuService {
             menuRepository.findById(menuId).orElseThrow(RuntimeException::new));
     }
 
+    public List<MenuResponse> findMenusInMenuIds(Long... menuId) {
+        return menuRepository.findByIdIn(menuId)
+            .stream()
+            .map(MenuResponse::from)
+            .collect(Collectors.toList());
+    }
+
     public void deleteMenu(Long menuId) {
         menuRepository.deleteById(menuId);
     }

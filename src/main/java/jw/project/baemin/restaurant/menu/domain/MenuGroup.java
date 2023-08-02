@@ -35,7 +35,7 @@ public class MenuGroup {
     private Long shopId;
 
     @OneToMany(mappedBy = "menuGroup", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Menu> menus = new ArrayList<>();
+    private List<Menu> menus;
 
     public void setShopId(Long shopId) {
         this.shopId = shopId;
@@ -48,6 +48,9 @@ public class MenuGroup {
     }
 
     public void addMenu(Menu menu) {
+        if(menus == null){
+            menus = new ArrayList<>();
+        }
         menus.add(menu);
     }
 }
