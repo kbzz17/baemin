@@ -1,19 +1,24 @@
 package jw.project.baemin.restaurant.restaurant.application;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import jw.project.baemin.region.application.RegionService;
+import jw.project.baemin.region.domain.RegionCode;
 import jw.project.baemin.restaurant.category.application.CategoryService;
+import jw.project.baemin.restaurant.delivery.domain.DeliveryRegion;
+import jw.project.baemin.restaurant.delivery.infrastructure.DeliveryRegionRepository;
 import jw.project.baemin.restaurant.restaurant.domain.Restaurant;
 import jw.project.baemin.restaurant.restaurant.domain.eums.OrderType;
 import jw.project.baemin.restaurant.restaurant.domain.eums.SupportPayment;
 import jw.project.baemin.restaurant.restaurant.infrastructure.RestaurantRepository;
+import jw.project.baemin.restaurant.restaurant.presentation.request.AddDeliveryRegionRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.request.CreateRestaurantRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.request.UpdateRestaurantRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.response.RestaurantResponse;
 import jw.project.baemin.restaurant.restaurantCategory.domain.RestaurantCategory;
-import jw.project.baemin.restaurant.restaurantCategory.domain.RestaurantCategoryId;
 import jw.project.baemin.restaurant.restaurantCategory.infrastructure.RestaurantCategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,6 +30,10 @@ public class RestaurantService {
     private final RestaurantCategoryRepository restaurantCategoryRepository;
 
     private final CategoryService categoryService;
+
+    private final RegionService regionService;
+
+    private final DeliveryRegionRepository deliveryRegionRepository;
 
     public RestaurantResponse createRestaurantByOwnerId(Long ownerId,
         CreateRestaurantRequest request) {
@@ -82,8 +91,36 @@ public class RestaurantService {
     }
 
     public Long deleteRestaurantCategory(Long restaurantId, Long categoryId) {
-        return restaurantCategoryRepository.deleteByRestaurantIdAndCategoryId(restaurantId, categoryId);
+        return restaurantCategoryRepository.deleteByRestaurantIdAndCategoryId(restaurantId,
+            categoryId);
     }
+
+    public Long addDeliveryRegion(AddDeliveryRegionRequest request) {
+        Restaurant restaurant = validFindRestaurantById(request.restaurantId());
+        RegionCode regionCode = regionService.findRegionById(request.regionCodeId());
+
+        DeliveryRegion deliveryRegion = DeliveryRegion.create(regionCode, restaurant,
+            request.deliveryFee());
+
+        restaurant.addDeliveryRegion(deliveryRegion);
+        return restaurantRepository.save(restaurant).getId();
+    }
+
+    public List<RestaurantResponse> findRestaurantByRegionCode(Long regionCodeId,
+        PageRequest pageRequest) {
+        RegionCode regionCode = regionService.findRegionById(regionCodeId);
+
+        List<DeliveryRegion> deliveryRegions =
+            deliveryRegionRepository.findByRegionCodeId(regionCodeId);
+
+        Page<Restaurant> restaurants = restaurantRepository.findByDeliveryRegionsRegionCode(
+            regionCode, deliveryRegions, pageRequest);
+
+        return restaurants.stream()
+            .map(RestaurantResponse::from)
+            .collect(Collectors.toList());
+    }
+
 
     private Restaurant validFindRestaurantById(Long restaurantId) {
         return restaurantRepository.findById(restaurantId).orElseThrow(RuntimeException::new);

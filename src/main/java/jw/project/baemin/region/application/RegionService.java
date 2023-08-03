@@ -30,6 +30,9 @@ public class RegionService {
             .orElseThrow(RuntimeException::new);
     }
 
+    public RegionCode findRegionById(Long regionId) {
+        return regionRepository.findById(regionId).orElseThrow(RuntimeException::new);
+    }
 
     private List<RegionCode> parseRegions() {
         String regionFileName = "RegionFile.txt";
