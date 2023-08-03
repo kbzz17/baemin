@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import jw.project.baemin.restaurant.delivery.domain.DeliveryRegion;
 import jw.project.baemin.restaurant.restaurant.domain.eums.OrderType;
 import jw.project.baemin.restaurant.restaurant.domain.eums.ShopStatus;
 import jw.project.baemin.restaurant.restaurant.domain.eums.SupportPayment;
@@ -69,6 +70,10 @@ public class Restaurant {
     @Builder.Default
     List<RestaurantCategory> categories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "restaurant", orphanRemoval = true, cascade = CascadeType.ALL)
+    List<DeliveryRegion> deliveryRegions;
+
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -85,6 +90,13 @@ public class Restaurant {
 
     public void addCategory(RestaurantCategory category) {
         categories.add(category);
+    }
+
+    public void addDeliveryRegion(DeliveryRegion region) {
+        if (deliveryRegions == null) {
+            deliveryRegions = new ArrayList<>();
+        }
+        deliveryRegions.add(region);
     }
 
     public void changeStatus() {
