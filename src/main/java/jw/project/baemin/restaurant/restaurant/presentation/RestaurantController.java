@@ -4,9 +4,11 @@ import jw.project.baemin.common.ApiResponse;
 import jw.project.baemin.restaurant.restaurant.application.RestaurantService;
 import jw.project.baemin.restaurant.restaurant.domain.eums.OrderType;
 import jw.project.baemin.restaurant.restaurant.domain.eums.SupportPayment;
+import jw.project.baemin.restaurant.restaurant.presentation.request.AddDeliveryRegionRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.request.CreateRestaurantRequest;
 import jw.project.baemin.restaurant.restaurant.presentation.request.UpdateRestaurantRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -86,4 +89,19 @@ public class RestaurantController {
         return ApiResponse.success(
             restaurantService.deleteRestaurantCategory(restaurantId, categoryId));
     }
+
+    @PostMapping("/region")
+    public ApiResponse<?> addDeliveryRegion(@RequestBody AddDeliveryRegionRequest request) {
+        return ApiResponse.success(restaurantService.addDeliveryRegion(request));
+    }
+
+    @GetMapping("/near")
+    public ApiResponse<?> findRestaurantsByRegionCodeId(@RequestParam Long regionCodeId,
+        @RequestParam int page, @RequestParam int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        return ApiResponse.success(
+            restaurantService.findRestaurantByRegionCode(regionCodeId, pageRequest));
+    }
+
 }
