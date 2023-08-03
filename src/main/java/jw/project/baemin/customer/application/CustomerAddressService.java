@@ -47,6 +47,11 @@ public class CustomerAddressService {
             .collect(Collectors.toList());
     }
 
+    public CustomerAddressResponse findCustomerAddressByIsMain(Long customerId) {
+        return CustomerAddressResponse.from(
+            customerAddressRepository.findByCustomerIdAndIsMainIsTrue(customerId));
+    }
+
     public CustomerAddressResponse updateCustomerAddress(Long id,
         UpdateCustomerAddressRequest request) {
         CustomerAddress customerAddress = validateFindByAddressId(id);
