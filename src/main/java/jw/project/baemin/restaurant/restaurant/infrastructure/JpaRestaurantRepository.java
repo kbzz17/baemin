@@ -9,6 +9,4 @@ public interface JpaRestaurantRepository extends JpaRepository<Restaurant, Long>
     List<Restaurant> findByOwnerId(Long ownerId);
 
     Optional<Restaurant> findByOwnerIdAndId(Long ownerId, Long restaurantId);
-
-    List<Restaurant> findByDeliveryRegionsRegionCode(String regionCodeId);
 }

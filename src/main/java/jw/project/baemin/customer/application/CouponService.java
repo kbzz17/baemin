@@ -56,4 +56,18 @@ public class CouponService {
             .map(CouponResponse::from)
             .collect(Collectors.toList());
     }
+
+    public void useCoupon(Long couponId) {
+        Coupon coupon = validCouponByCouponId(couponId);
+        coupon.used();
+    }
+
+    public void cancelCoupon(Long couponId){
+        Coupon coupon = validCouponByCouponId(couponId);
+        coupon.canceled();
+    }
+
+    private Coupon validCouponByCouponId(Long couponId){
+        return couponRepository.findById(couponId).orElseThrow(RuntimeException::new);
+    }
 }
