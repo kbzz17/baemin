@@ -49,7 +49,7 @@ public class CustomerAddressService {
 
     public CustomerAddressResponse findCustomerAddressByIsMain(Long customerId) {
         return CustomerAddressResponse.from(
-            customerAddressRepository.findByCustomerIdAndIsMainIsTrue(customerId));
+            customerAddressRepository.findByCustomerIdAndMainAddressIsTrue(customerId));
     }
 
     public CustomerAddressResponse updateCustomerAddress(Long id,
