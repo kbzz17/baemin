@@ -6,9 +6,7 @@ import jw.project.baemin.cart.domain.CartItem;
 public record AddCartItemToCartRequest(Long menuId, Integer count, BigDecimal price) {
     public CartItem toEntity() {
         return CartItem.builder()
-            .menuId(menuId)
             .count(count)
-            .price(price)
             .build();
     }
 }

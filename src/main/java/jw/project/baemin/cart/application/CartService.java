@@ -39,18 +39,13 @@ public class CartService {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
             .orElseThrow(RuntimeException::new);
 
-        MenuResponse menu = menuService.findMenu(cartItem.getMenuId());
+        MenuResponse menu = menuService.findMenu(cartItem.getMenu().getId());
 
-        return CartItemResponse.from(cartItem.getCount(), cartItem.getPrice(), menu);
+        return CartItemResponse.from(cartItem.getId(), cartItem.getCount(), menu);
     }
 
     public List<CartItemResponse> findAllCartItems(Long customerId) {
         Cart cart = cartRepository.findById(customerId).orElseThrow(RuntimeException::new);
-
-        List<Long> menuIds = cart.getCartItems()
-            .stream()
-            .map(CartItem::getMenuId)
-            .toList();
 
         List<MenuResponse> menusInMenuIds = menuService.findMenusInMenuIds(customerId);
 
@@ -58,9 +53,9 @@ public class CartService {
             .stream()
             .map(cartItem ->
                 CartItemResponse.from(
+                    cartItem.getId(),
                     cartItem.getCount(),
-                    cartItem.getPrice(),
-                    findMenuByMenuIds(menusInMenuIds, cartItem.getMenuId())))
+                    findMenuByMenuIds(menusInMenuIds, cartItem.getMenu().getId())))
             .collect(Collectors.toList());
     }
 
