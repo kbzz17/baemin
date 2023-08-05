@@ -1,12 +1,15 @@
 package jw.project.baemin.cart.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.math.BigDecimal;
+import jakarta.persistence.OneToOne;
+import jw.project.baemin.order.domain.Order;
+import jw.project.baemin.restaurant.menu.domain.Menu;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,15 +21,19 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long menuId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
 
     private Integer count;
-
-    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     public void changeCount(Integer updateCount) {
         this.count = updateCount;
@@ -36,10 +43,9 @@ public class CartItem {
     }
 
     @Builder
-    public CartItem(Long id, Long menuId, Integer count, BigDecimal price) {
+    public CartItem(Long id, Menu menu, Integer count) {
         this.id = id;
-        this.menuId = menuId;
+        this.menu = menu;
         this.count = count;
-        this.price = price;
     }
 }

@@ -37,7 +37,19 @@ public class Coupon {
 
     private LocalDateTime expiredDate;
 
-    public Boolean hasExpired(){
+    public Boolean hasExpired() {
         return LocalDateTime.now().isAfter(this.expiredDate);
+    }
+
+    public int calculateDiscount(int price) {
+        return couponType.discount(price, discountAmount);
+    }
+
+    public void used(){
+        this.isUse = true;
+    }
+
+    public void canceled(){
+        this.isUse = false;
     }
 }
