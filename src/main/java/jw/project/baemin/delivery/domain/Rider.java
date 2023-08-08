@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,13 @@ public class Rider {
 
     public void changeWorkingNow(boolean workingNow) {
         this.workingNow = workingNow;
+    }
+
+    public void addRiderRegion(RiderRegion riderRegion) {
+        if(this.riderRegions==null){
+            this.riderRegions = new ArrayList<>();
+        }
+        this.riderRegions.add(riderRegion);
     }
 
     public Rider() {

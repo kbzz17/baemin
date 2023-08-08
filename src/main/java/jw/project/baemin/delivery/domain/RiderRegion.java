@@ -6,8 +6,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jw.project.baemin.region.domain.RegionCode;
+import lombok.Builder;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class RiderRegion {
 
     @Id
@@ -19,4 +22,14 @@ public class RiderRegion {
 
     @ManyToOne
     private RegionCode regionCode;
+
+    public RiderRegion() {
+    }
+
+    @Builder
+    public RiderRegion(Long id, Rider rider, RegionCode regionCode) {
+        this.id = id;
+        this.rider = rider;
+        this.regionCode = regionCode;
+    }
 }

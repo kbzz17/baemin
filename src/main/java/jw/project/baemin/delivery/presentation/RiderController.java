@@ -43,4 +43,11 @@ public class RiderController {
         return ApiResponse.success(null);
     }
 
+    @PostMapping("/{riderId}/region/{regionCodeId}")
+    public ApiResponse<?> addRiderRegion(@PathVariable Long riderId,
+        @PathVariable Long regionCodeId) {
+        riderService.addRiderAreaCode(riderId, regionCodeId);
+        return ApiResponse.success(null);
+    }
+
 }
