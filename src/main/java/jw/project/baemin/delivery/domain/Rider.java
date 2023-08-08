@@ -29,6 +29,10 @@ public class Rider {
     @OneToMany(mappedBy = "rider", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<RiderRegion> riderRegions;
 
+    public void changeWorkingNow(boolean workingNow) {
+        this.workingNow = workingNow;
+    }
+
     public Rider() {
     }
 
