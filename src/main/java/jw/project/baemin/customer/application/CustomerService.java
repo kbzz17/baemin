@@ -1,6 +1,5 @@
 package jw.project.baemin.customer.application;
 
-import jw.project.baemin.common.ApiResponse;
 import jw.project.baemin.customer.domain.Customer;
 import jw.project.baemin.customer.infrastructure.CustomerRepository;
 import jw.project.baemin.customer.presentation.request.CreateCustomerRequest;
@@ -26,6 +25,10 @@ public class CustomerService {
         Customer customer = customerRepository.findById(customerId)
             .orElseThrow(RuntimeException::new);
         return CustomerResponse.from(customer);
+    }
+    public Customer findCustomer(Long customerId) {
+        return customerRepository.findById(customerId)
+            .orElseThrow(RuntimeException::new);
     }
 
     public CustomerResponse updateCustomer(Long customerId, UpdateCustomerRequest request) {
