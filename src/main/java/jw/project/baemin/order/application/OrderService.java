@@ -1,10 +1,7 @@
 package jw.project.baemin.order.application;
 
-import java.util.List;
-import jw.project.baemin.cart.application.CartService;
-import jw.project.baemin.cart.domain.CartItem;
-import jw.project.baemin.cart.presentation.response.CartItemResponse;
 import jw.project.baemin.customer.application.CouponService;
+import jw.project.baemin.customer.application.CustomerAddressService;
 import jw.project.baemin.customer.application.CustomerService;
 import jw.project.baemin.customer.domain.Coupon;
 import jw.project.baemin.customer.domain.Customer;
@@ -13,11 +10,11 @@ import jw.project.baemin.customer.infrastructure.CustomerAddressRepository;
 import jw.project.baemin.customer.infrastructure.CustomerRepository;
 import jw.project.baemin.delivery.application.DeliveryService;
 import jw.project.baemin.delivery.domain.Delivery;
-import jw.project.baemin.delivery.infrastructure.DeliveryRepository;
 import jw.project.baemin.order.domain.Order;
 import jw.project.baemin.order.domain.enums.PaymentType;
 import jw.project.baemin.order.infrastructure.OrderRepository;
 import jw.project.baemin.order.presentation.request.CreateOrderRequest;
+import jw.project.baemin.payment.domain.Payment;
 import jw.project.baemin.restaurant.restaurant.domain.Restaurant;
 import jw.project.baemin.restaurant.restaurant.infrastructure.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,41 +25,35 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
     private final CustomerService customerService;
+
     private final CouponService couponService;
-    private final CartService cartService;
 
     private final DeliveryService deliveryService;
 
-    private final CustomerAddressRepository customerAddressRepository;
-    private final CouponRepository couponRepository;
-
-    private final CustomerRepository customerRepository;
+    private final CustomerAddressService customerAddressService;
 
     private final RestaurantRepository restaurantRepository;
 
     private final OrderRepository orderRepository;
 
-    private final DeliveryRepository deliveryRepository;
-
     //Customer
     public Long createOrder(CreateOrderRequest request) {
-        Customer customer = validCustomerByCustomerId(request.customerId());
+        Customer customer = customerService.findCustomer(request.customerId());
 
-        String deliveryAddress = customerAddressRepository.findByCustomerIdAndMainAddressIsTrue(
+        String deliveryAddress = customerAddressService.findCustomerAddressByIsMainEntity(
             request.customerId()).getFullAddress();
 
-        Coupon coupon = validCouponByCouponId(request.couponId());
+        Coupon coupon = couponService.findCouponEntity(request.couponId());
+        coupon.used();
 
         Restaurant restaurant = validRestaurantByRestaurantId(request.restaurantId());
 
-        List<CartItemResponse> cartItems = cartService.findAllCartItems(request.customerId());
-        List<CartItem> orderItems = cartItems.stream()
-            .map(CartItemResponse::toCartItem)
-            .toList();
-
-        Order order = Order.createOrder(customer, restaurant, coupon, orderItems,
+        Order order = Order.createOrder(customer, restaurant, coupon, request.items(),
             request.requests(), PaymentType.valueOf(request.paymentType()),
             request.deliveryFee(), deliveryAddress);
+
+        Payment payment = Payment.createPayment(customer, order,
+            PaymentType.valueOf(request.paymentType()), order.getFinalPrice());
 
         return orderRepository.save(order).getId();
     }
@@ -81,16 +72,10 @@ public class OrderService {
         cancelCoupon(order);
     }
 
-    private void cancelCoupon(Order order){
+    private void cancelCoupon(Order order) {
         couponService.cancelCoupon(order.getCoupon().getId());
     }
-    private Coupon validCouponByCouponId(Long couponId) {
-        return couponRepository.findById(couponId).orElseThrow(RuntimeException::new);
-    }
 
-    private Customer validCustomerByCustomerId(Long customerId) {
-        return customerRepository.findById(customerId).orElseThrow(RuntimeException::new);
-    }
 
     private Restaurant validRestaurantByRestaurantId(Long restaurantId) {
         return restaurantRepository.findById(restaurantId).orElseThrow(RuntimeException::new);

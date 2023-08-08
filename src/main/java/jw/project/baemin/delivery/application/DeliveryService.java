@@ -17,10 +17,9 @@ public class DeliveryService {
     }
 
     public Delivery saveDelivery(Order order) {
-        return deliveryRepository.save(
-            Delivery.createDelivery(order, order.getRestaurant().getAddress(),
-                order.getDeliveryAddress(), order.getDeliveryFee())
-        );
+        Delivery delivery = Delivery.createDelivery(order, order.getRestaurant().getAddress(),
+            order.getDeliveryAddress(), order.getDeliveryFee());
+        return deliveryRepository.save(delivery);
     }
 
 }
