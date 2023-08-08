@@ -50,4 +50,10 @@ public class RiderController {
         return ApiResponse.success(null);
     }
 
+    @DeleteMapping("/{riderId}/region/{regionCodeId}")
+    public ApiResponse<?> deleteRiderRegion(@PathVariable Long riderId, @PathVariable Long regionCodeId){
+        riderService.removeRiderAreaCode(riderId, regionCodeId);
+        return ApiResponse.success(null);
+    }
+
 }

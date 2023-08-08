@@ -1,5 +1,6 @@
 package jw.project.baemin.delivery.application;
 
+import java.util.List;
 import jw.project.baemin.delivery.domain.Rider;
 import jw.project.baemin.delivery.domain.RiderRegion;
 import jw.project.baemin.delivery.infrastructure.RiderRepository;
@@ -43,5 +44,16 @@ public class RiderService {
             .regionCode(regionCode)
             .build();
         rider.addRiderRegion(riderRegion);
+    }
+
+    @Transactional
+    public void removeRiderAreaCode(Long riderId, Long regionCodeId){
+        Rider rider = findRider(riderId);
+        List<RiderRegion> riderRegions = rider.getRiderRegions();
+        riderRegions.stream()
+            .filter(riderRegion -> riderRegion.getRegionCode().getId().equals(regionCodeId))
+            .findFirst()
+            .ifPresent(riderRegions::remove);
+
     }
 }
