@@ -5,6 +5,7 @@ import static jw.project.baemin.payment.domain.enums.PaymentStatus.*;
 import jakarta.persistence.Entity;
 
 
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,21 +44,25 @@ public class Payment {
 
     private PaymentType paymentType;
 
-    @OneToOne(mappedBy = "payment")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
     private Order order;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public static Payment createPayment(Customer customer, Order order, PaymentType paymentType,
+    public static Payment createPayment(Customer customer, PaymentType paymentType,
         int price) {
         return Payment.builder()
             .customer(customer)
-            .order(order)
             .paymentStatus(NOT_PAYED)
             .paymentType(paymentType)
             .price(price)
             .build();
+    }
+
+    public void assignOrder(Order order) {
+        this.order = order;
     }
 
     public void changeStatus(@NonNull PaymentStatus status) {
