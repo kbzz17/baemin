@@ -23,6 +23,7 @@ import jw.project.baemin.customer.domain.Customer;
 import jw.project.baemin.delivery.domain.Delivery;
 import jw.project.baemin.order.domain.enums.OrderStatus;
 import jw.project.baemin.order.domain.enums.PaymentType;
+import jw.project.baemin.payment.domain.Payment;
 import jw.project.baemin.restaurant.restaurant.domain.Restaurant;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,6 +56,9 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Payment payment;
 
     private String requests;
 
@@ -113,6 +117,10 @@ public class Order {
             coupon = null;
         }
         this.orderStatus = CANCELED;
+    }
+
+    public void setPayment(Payment payment){
+        this.payment = payment;
     }
 
     public Order() {
