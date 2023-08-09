@@ -1,7 +1,5 @@
 package jw.project.baemin.payment.application;
 
-import jakarta.persistence.OneToOne;
-import java.time.LocalDateTime;
 import jw.project.baemin.order.application.OrderService;
 import jw.project.baemin.order.domain.Order;
 import jw.project.baemin.order.domain.enums.PaymentType;
@@ -10,7 +8,6 @@ import jw.project.baemin.payment.domain.dto.CreatePaymentDTO;
 import jw.project.baemin.payment.domain.enums.PaymentStatus;
 import jw.project.baemin.payment.infrastructure.PaymentRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.stereotype.Service;
 
 @Service
