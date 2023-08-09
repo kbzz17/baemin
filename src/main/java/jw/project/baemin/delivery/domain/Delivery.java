@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import jw.project.baemin.order.domain.Order;
@@ -27,6 +28,10 @@ public class Delivery {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "rider_id")
+    private Rider rider;
 
     public static Delivery createDelivery(Order order, String restaurantAddress,
         String customerAddress, int deliveryFee){
