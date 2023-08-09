@@ -1,5 +1,6 @@
 package jw.project.baemin.order.application;
 
+import java.util.List;
 import jw.project.baemin.customer.application.CouponService;
 import jw.project.baemin.customer.application.CustomerAddressService;
 import jw.project.baemin.customer.application.CustomerService;
@@ -8,13 +9,12 @@ import jw.project.baemin.customer.domain.Customer;
 import jw.project.baemin.delivery.application.DeliveryService;
 import jw.project.baemin.delivery.domain.Delivery;
 import jw.project.baemin.order.domain.Order;
+import jw.project.baemin.order.domain.enums.OrderStatus;
 import jw.project.baemin.order.domain.enums.PaymentType;
 import jw.project.baemin.order.infrastructure.OrderRepository;
 import jw.project.baemin.order.presentation.request.CreateOrderRequest;
-import jw.project.baemin.payment.application.PaymentService;
-import jw.project.baemin.payment.domain.Payment;
+import jw.project.baemin.restaurant.restaurant.application.RestaurantService;
 import jw.project.baemin.restaurant.restaurant.domain.Restaurant;
-import jw.project.baemin.restaurant.restaurant.infrastructure.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +30,7 @@ public class OrderService {
 
     private final CustomerAddressService customerAddressService;
 
-    private final PaymentService paymentService;
-
-    private final RestaurantRepository restaurantRepository;
+    private final RestaurantService restaurantService;
 
     private final OrderRepository orderRepository;
 
@@ -55,7 +53,11 @@ public class OrderService {
         return orderRepository.findById(orderId).orElseThrow(RuntimeException::new);
     }
 
-    //Owner
+    public List<Order> findCustomerOrders(Long customerId){
+        return orderRepository.findByCustomerId(customerId);
+    }
+
+    //restaurant
     public void acceptOrder(Long orderId) {
         Order order = validOrderByOrderId(orderId);
         Delivery delivery = deliveryService.saveDelivery(order);
@@ -63,10 +65,18 @@ public class OrderService {
         order.acceptOrder(delivery);
     }
 
-    public void cancelOrder(Long orderId) {
+    public void rejectOrder(Long orderId) {
         Order order = validOrderByOrderId(orderId);
         order.cancelOrder();
         cancelCoupon(order);
+    }
+
+    public List<Order> findRestaurantOrders(Long restaurantId) {
+        return orderRepository.findByRestaurantId(restaurantId);
+    }
+
+    public List<Order> findNotAcceptedOrders(Long restaurantId){
+        return orderRepository.findByRestaurantIdAndOrderStatus(restaurantId, OrderStatus.ORDERED);
     }
 
     private Coupon useCoupon(Long couponId) {
@@ -90,7 +100,7 @@ public class OrderService {
     }
 
     private Restaurant validRestaurantByRestaurantId(Long restaurantId) {
-        return restaurantRepository.findById(restaurantId).orElseThrow(RuntimeException::new);
+        return restaurantService.findRestaurantEntityByRestaurantId(restaurantId);
     }
 
     private Order validOrderByOrderId(Long orderId) {
