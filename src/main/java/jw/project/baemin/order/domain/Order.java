@@ -18,13 +18,12 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import jw.project.baemin.cart.domain.CartItem;
 import jw.project.baemin.customer.domain.Coupon;
 import jw.project.baemin.customer.domain.Customer;
-import jw.project.baemin.customer.domain.enums.CouponType;
 import jw.project.baemin.delivery.domain.Delivery;
 import jw.project.baemin.order.domain.enums.OrderStatus;
 import jw.project.baemin.order.domain.enums.PaymentType;
+import jw.project.baemin.payment.domain.Payment;
 import jw.project.baemin.restaurant.restaurant.domain.Restaurant;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,7 +55,10 @@ public class Order {
     private Delivery delivery;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> cartItems = new ArrayList<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Payment payment;
 
     private String requests;
 
@@ -80,10 +82,10 @@ public class Order {
     private LocalDateTime orderedTime;
 
     public static Order createOrder(Customer customer, Restaurant restaurant, Coupon coupon,
-        List<CartItem> cartItems, String requests, PaymentType paymentType, Integer deliveryFee,
+        List<OrderItem> orderItems, String requests, PaymentType paymentType, Integer deliveryFee,
         String deliveryAddress) {
 
-        int orderPrice = cartItems.stream()
+        int orderPrice = orderItems.stream()
             .mapToInt(item -> item.getMenu().getPrice() * item.getCount())
             .sum();
 
@@ -92,8 +94,8 @@ public class Order {
         return Order.builder()
             .customer(customer)
             .restaurant(restaurant)
+            .orderItems(orderItems)
             .coupon(coupon)
-            .cartItems(cartItems)
             .requests(requests)
             .orderPrice(orderPrice)
             .deliveryFee(deliveryFee)
@@ -117,13 +119,17 @@ public class Order {
         this.orderStatus = CANCELED;
     }
 
+    public void setPayment(Payment payment){
+        this.payment = payment;
+    }
+
     public Order() {
     }
 
     @Builder
     public Order(Long id, Customer customer, Restaurant restaurant, Coupon coupon,
         Delivery delivery,
-        List<CartItem> cartItems, String requests, Integer orderPrice, Integer deliveryFee,
+        List<OrderItem> orderItems, String requests, Integer orderPrice, Integer deliveryFee,
         Integer discountPrice, Integer finalPrice, String deliveryAddress, PaymentType paymentType,
         OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
@@ -131,7 +137,7 @@ public class Order {
         this.restaurant = restaurant;
         this.coupon = coupon;
         this.delivery = delivery;
-        this.cartItems.addAll(cartItems);
+        this.orderItems.addAll(orderItems);
         this.requests = requests;
         this.orderPrice = orderPrice;
         this.deliveryFee = deliveryFee;

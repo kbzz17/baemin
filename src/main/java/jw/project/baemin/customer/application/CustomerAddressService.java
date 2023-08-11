@@ -52,6 +52,10 @@ public class CustomerAddressService {
             customerAddressRepository.findByCustomerIdAndMainAddressIsTrue(customerId));
     }
 
+    public CustomerAddress findCustomerAddressByIsMainEntity(Long customerId) {
+        return customerAddressRepository.findByCustomerIdAndMainAddressIsTrue(customerId);
+    }
+
     public CustomerAddressResponse updateCustomerAddress(Long id,
         UpdateCustomerAddressRequest request) {
         CustomerAddress customerAddress = validateFindByAddressId(id);
@@ -76,7 +80,7 @@ public class CustomerAddressService {
         customer.removeAddress(customerAddress);
     }
 
-    private Customer validateFindByCustomerId(Long customerId) {
+    public Customer validateFindByCustomerId(Long customerId) {
         return customerRepository.findById(customerId).orElseThrow(RuntimeException::new);
     }
 

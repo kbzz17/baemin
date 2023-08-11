@@ -46,6 +46,10 @@ public class RestaurantService {
         return RestaurantResponse.from(restaurant);
     }
 
+    public Restaurant findRestaurantEntityByRestaurantId(Long restaurantId) {
+        return validFindRestaurantById(restaurantId);
+    }
+
     public List<RestaurantResponse> findOwnerRestaurants(Long ownerId) {
         List<Restaurant> restaurants = restaurantRepository.findByOwnerId(ownerId);
         return restaurants.stream()

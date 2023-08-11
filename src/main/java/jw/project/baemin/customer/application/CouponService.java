@@ -7,7 +7,6 @@ import jw.project.baemin.customer.domain.Customer;
 import jw.project.baemin.customer.infrastructure.CouponRepository;
 import jw.project.baemin.customer.infrastructure.CustomerRepository;
 import jw.project.baemin.customer.presentation.request.coupon.CreateCouponRequest;
-import jw.project.baemin.customer.presentation.response.CustomerResponse;
 import jw.project.baemin.customer.presentation.response.coupon.CouponResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,6 +47,10 @@ public class CouponService {
         return CouponResponse.from(coupon);
     }
 
+    public Coupon findCouponEntity(Long couponId) {
+        return couponRepository.findById(couponId).orElseThrow(RuntimeException::new);
+    }
+
     public List<CouponResponse> findUserCoupons(Long customerId) {
         Customer customer = customerRepository.findById(customerId)
             .orElseThrow(RuntimeException::new);
@@ -57,17 +60,18 @@ public class CouponService {
             .collect(Collectors.toList());
     }
 
-    public void useCoupon(Long couponId) {
+    public Coupon useCoupon(Long couponId) {
         Coupon coupon = validCouponByCouponId(couponId);
         coupon.used();
+        return coupon;
     }
 
-    public void cancelCoupon(Long couponId){
+    public void cancelCoupon(Long couponId) {
         Coupon coupon = validCouponByCouponId(couponId);
         coupon.canceled();
     }
 
-    private Coupon validCouponByCouponId(Long couponId){
+    private Coupon validCouponByCouponId(Long couponId) {
         return couponRepository.findById(couponId).orElseThrow(RuntimeException::new);
     }
 }
