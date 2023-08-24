@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
-import jw.project.baemin.order.domain.Order;
+import jakarta.persistence.Transient;
 import jw.project.baemin.restaurant.menu.domain.Menu;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,15 +25,16 @@ public class CartItem {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
+    @Transient
+    private Long menuId;
+    @Transient
+    private Long cartId;
+
     private Integer count;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
     private Cart cart;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
 
     public void changeCount(Integer updateCount) {
         this.count = updateCount;
@@ -43,9 +44,12 @@ public class CartItem {
     }
 
     @Builder
-    public CartItem(Long id, Menu menu, Integer count) {
+    public CartItem(Long id, Menu menu, Long menuId, Long cartId, Integer count, Cart cart) {
         this.id = id;
         this.menu = menu;
+        this.menuId = menuId;
+        this.cartId = cartId;
         this.count = count;
+        this.cart = cart;
     }
 }
