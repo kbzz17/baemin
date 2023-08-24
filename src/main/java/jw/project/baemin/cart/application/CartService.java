@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import jw.project.baemin.cart.domain.Cart;
 import jw.project.baemin.cart.domain.CartItem;
-import jw.project.baemin.cart.infrastructure.CartItemRepository;
+import jw.project.baemin.cart.domain.CartItemRepository;
 import jw.project.baemin.cart.infrastructure.CartRepository;
 import jw.project.baemin.cart.presentation.request.AddCartItemToCartRequest;
 import jw.project.baemin.cart.presentation.response.CartItemResponse;
@@ -31,13 +31,23 @@ public class CartService {
         return cartRepository.save(cart).getCustomerId();
     }
 
+    public void addMenus(Long customerId,
+        Long restaurantId, List<AddCartItemToCartRequest> request) {
+        getOrCreateCart(customerId, restaurantId);
+
+        List<CartItem> cartItem = request.stream()
+            .map(item -> item.toEntityForJDBC(customerId))
+            .collect(Collectors.toList());
+
+        cartItemRepository.saveAll(customerId, cartItem);
+    }
+
     public void deleteCartItem(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);
     }
 
     public CartItemResponse findCartItem(Long cartItemId) {
-        CartItem cartItem = cartItemRepository.findById(cartItemId)
-            .orElseThrow(RuntimeException::new);
+        CartItem cartItem = cartItemRepository.findById(cartItemId);
 
         MenuResponse menu = menuService.findMenu(cartItem.getMenu().getId());
 
@@ -60,8 +70,7 @@ public class CartService {
     }
 
     public Long updateCartItem(Long cartItemId, Integer count) {
-        CartItem cartItem = cartItemRepository.findById(cartItemId)
-            .orElseThrow(RuntimeException::new);
+        CartItem cartItem = cartItemRepository.findById(cartItemId);
 
         cartItem.changeCount(count);
         return cartItemRepository.save(cartItem).getId();
