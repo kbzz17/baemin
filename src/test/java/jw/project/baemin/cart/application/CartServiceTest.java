@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import jw.project.baemin.cart.domain.Cart;
 import jw.project.baemin.cart.domain.CartItem;
-import jw.project.baemin.cart.infrastructure.CartItemRepository;
+import jw.project.baemin.cart.infrastructure.JpaCartItemRepository;
 import jw.project.baemin.cart.infrastructure.CartRepository;
 import jw.project.baemin.cart.presentation.request.AddCartItemToCartRequest;
 import jw.project.baemin.support.IntegrationTestSupport;
@@ -21,7 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 public class CartServiceTest extends IntegrationTestSupport {
 
     @MockBean
-    CartItemRepository cartItemRepository;
+    JpaCartItemRepository jpaCartItemRepository;
 
     @MockBean
     CartRepository cartRepository;
