@@ -1,11 +1,11 @@
 package jw.project.baemin.cart.presentation;
 
+import java.util.List;
 import jw.project.baemin.cart.application.CartService;
 import jw.project.baemin.cart.presentation.request.AddCartItemToCartRequest;
 import jw.project.baemin.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,10 +25,11 @@ public class CartController {
         return ApiResponse.success(
             cartService.addDeliveryMenuToCart(customerId, restaurantId, request));
     }
-
-    @GetMapping("/{customerId}")
-    public ApiResponse<?> findAllCartItems(@PathVariable Long customerId) {
-        return ApiResponse.success(cartService.findAllCartItems(customerId));
+    @PostMapping("/{customerId}/restaurant/{restaurantId}/all")
+    public ApiResponse<?> addMenus(@PathVariable Long customerId,
+        @PathVariable Long restaurantId, @RequestBody List<AddCartItemToCartRequest> request) {
+        cartService.addMenus(customerId, restaurantId, request);
+        return ApiResponse.success(null);
     }
 
     @DeleteMapping("/{cartItemId}")

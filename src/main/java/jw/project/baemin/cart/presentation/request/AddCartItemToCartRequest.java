@@ -9,4 +9,12 @@ public record AddCartItemToCartRequest(Long menuId, Integer count, BigDecimal pr
             .count(count)
             .build();
     }
+
+    public CartItem toEntityForJDBC(Long cartId) {
+        return CartItem.builder()
+            .menuId(menuId)
+            .cartId(cartId)
+            .count(count)
+            .build();
+    }
 }
